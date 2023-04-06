@@ -1,0 +1,83 @@
+/*
+ * CS1050
+ * Fall 2022
+ * Lab 10 
+ * by Michael Corcoran
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+
+#define S1 "1, 2, 3, 4 tell me that you love me more.  Sleepless long nights, that is what my youth was for."
+#define S2 "\t99 dreams I have had.  In every 1 a red balloon."
+#define S3 "And you'll start cryin' 96 tears."
+#define S4 "I demand the sum of.....$1,000,000.00!"
+#define STRINGCOUNT 4
+
+//defining strings to be used
+
+
+
+char * Filter(char *s);
+
+
+
+
+char * Filter(char *s) {
+
+      int count = 0;
+      for(int i = 0; s[i]; i++)
+      {
+          if (s[i] != ' ' && s[i] != '\t' && s[i] !='\n') //removes spaces in function
+          {
+              s[count++] = s[i];
+          }
+      }
+
+      count = 0;
+      for(int b = 0; s[b]; b++)
+      {
+          if (ispunct(s[b])) //removes punctuation in string
+          {}
+          else
+          {
+               s[count++] = s[b];
+          }
+      }
+      count = 0;
+      for(int z = 0; s[z]; z++)
+      {  
+          if (isupper(s[z]))
+          {
+          s[count++] = tolower(s[z]);  //letters that are upper case are then lowered
+          }
+          else
+          {
+               s[count++] = toupper(s[z]);  //letters that are lower case are then turned into uppercase
+          }
+       }
+      s[count] = '\0';
+      return s;
+}       
+
+
+int main(void)
+{
+    char s[STRINGCOUNT][10000]=
+    {
+        S1,S2,S3,S4,
+    };
+
+    printf("**** Original Strings ****\n");
+    for (int i=0;i<STRINGCOUNT;i++)
+    {
+        printf("#%d: %s\n",i,s[i]);
+    }
+
+    printf("\n\n**** Strings after filtering ****\n");
+    for (int i=0;i<STRINGCOUNT;i++)
+    {
+        printf("#%d: %s\n",i,Filter(s[i]));
+    }
+}
+
