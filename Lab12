@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <string.h>
+#include "fight.h"
+int main(int argc, char * argv[])
+{
+FILE * fp;
+char name[256];
+int ac,hp=0,hitbonus;
+char attack1[256];
+char attack2[256];
+Combatant c1={0},c2={0};
+if (argc!=4)
+{
+printf("*** Syntax:\n");
+printf("%s combatant_file combatant1_name combatant2_name\n\
+n",argv[0]);
+return -1;
+}
+fp=fopen(argv[1],"r");
+if (fp)
+{
+// Throw away the first line
+fgets(name,255,fp);
+#ifdef DEBUG
+printf("Threw away %s\n",name);
+#endif
+// Look for the combatants
+#ifdef DEBUG
+printf("Looking for \"%s\" and \"%s\"...\n",argv[2],argv[3]);
+#endif
+int foundone = 0;
+int foundtwo = 0;
+while (!feof(fp) && !(foundone && foundtwo))
+{
+int elements;
+elements=fscanf(fp," %[^,], %d, %d, %d, %[^,],
+%s",name,&ac,&hp,&hitbonus,attack1,attack2);
+#ifdef DEBUG
+printf("elements=%d\n",elements);
+#endif
+if (6==elements)
+{
+#ifdef DEBUG
+printf("\tCurrent=\"%s\"\n",name);
+#endif
+// Found first one?
+if (0==strcmp(name,argv[2]))
+{
+#ifdef DEBUG
+printf("Found \"%s\"!\n",name);
+#endif
+strcpy(c1.name,name);
+c1.ac=ac;
+c1.hp=hp;
+c1.hitbonus=hitbonus;
+strcpy(c1.attack1damage,attack1);
+strcpy(c1.attack2damage,attack2);
+foundone=1;
+}
+// Found the second one?
+if (0==strcmp(name,argv[3]))
+{
+#ifdef DEBUG
+printf("Found \"%s\"!\n",name);
+#endif
+strcpy(c2.name,name);
+c2.ac=ac;
+c2.hp=hp;
+c2.hitbonus=hitbonus;
+strcpy(c2.attack1damage,attack1);
+strcpy(c2.attack2damage,attack2);
+foundtwo=1;
+}
+}
+else
+{
+printf("*** Failed to read the right number of data elements from
+the file:%d ***\n",elements);
+}
+}
+fclose(fp);
+if (0==c1.hp)
+{
+printf("*** Error: could not find combatant %s\n",argv[2]);
+}
+else if (0==c2.hp)
+{
+printf("*** Error: could not find combatant %s\n",argv[3]);
+}
+else
+{
+Fight(c1,c2);
+}
+}
+else
+{
+printf("** Error: Could not open %s\n",argv[1]);
+}
+}
